@@ -21,8 +21,6 @@ dotenv.config();
         // remove the locallay saved file if the upload is fail
         fs.unlinkSync(localfilepath);
         console.log(error.message);
-        
-
         return null;
         
     }
