@@ -7,4 +7,4 @@ const asynchandler= async( requestHandler)=>{
 
 }
 
-export {asynchandler};
+export default asynchandler;
