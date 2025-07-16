@@ -7,3 +7,4 @@ class Apiresponce{
 
     } 
 }
+export {Apiresponce};
