@@ -16,8 +16,9 @@ dotenv.config();
         })
         // upload on cloudinary
         console.log("file is upload",response.url);
-     return response;
-    } catch (error) {
+          fs.unlinkSync(localfilepath);
+      return response;
+       } catch (error) {
         // remove the locallay saved file if the upload is fail
         fs.unlinkSync(localfilepath);
         console.log(error.message);

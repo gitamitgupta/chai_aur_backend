@@ -15,13 +15,14 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(200, "All field are required")
     }
     //check if user exists : user name / email
-   const existsUser = User.findOne({
+   const existsUser = await User.findOne({
     $or: [{ username }, { email }]
    })
    if (existsUser) {
     throw new ApiError(409, "user is alrady exist")
     }
    // check for images ,check for avatar
+   // req.files return the array of 1 data  which is object contion
     const avatarlocalpath = req.files?.avatar[0].path
     const coverImagelocalpath = req.files?.coverImage[0].path
      if (!avatarlocalpath) {
@@ -35,12 +36,16 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "avater is not upload")
     }
      //create a user object - create entry in db 
-    const user = await User.create({
+    const user = await User.create(
+    {
     fullname,
     avatar: avatar.url,
     coverImage: coverImage?.url || "",
-    username: username.tolowerCase(),
-    email,})
+    username: username.toLowerCase() ,
+    email,
+    password
+     }
+    )
     // REMOVE password and refeace token from the responce 
     const createuser= await User.findById(user._id).select("-password -refreshToken")
     if (!createuser) {
