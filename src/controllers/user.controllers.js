@@ -7,13 +7,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // get user details form frontend 
     const { fullname, email, username, password } = req.body
-    console.log("email: ", email);
+    
+
     // validation --not empty 
-    if ([fullname, email, username, password].some((field) => {
-        field?.trim() === ""
-    })) {
-        throw new ApiError(200, "All field are required")
-    }
+   if ([fullname, email, username, password].some(field =>!field || field.trim() === "")) {
+    throw new ApiError(400, "All fields are required");
+}
+
     //check if user exists : user name / email
    const existsUser = await User.findOne({
     $or: [{ username }, { email }]
@@ -30,7 +30,10 @@ const registerUser = asyncHandler(async (req, res) => {
     }
     // upload on cloudinary ,avatar AND check for avatar 
     const avatar = await uploadOncloudinary(avatarlocalpath)
-     const coverImage = await uploadOncloudinary(coverImagelocalpath)
+     let coverImage;
+    if (coverImagelocalpath) {
+        coverImage = await uploadOncloudinary(coverImagelocalpath);
+    }
     //check
     if (!avatar) {
     throw new ApiError(400, "avater is not upload")

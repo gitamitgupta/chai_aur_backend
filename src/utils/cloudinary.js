@@ -16,7 +16,10 @@ dotenv.config();
         })
         // upload on cloudinary
         console.log("file is upload",response.url);
-          fs.unlinkSync(localfilepath);
+     if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+      console.log("File deleted:", fullPath);
+      }
       return response;
        } catch (error) {
         // remove the locallay saved file if the upload is fail
