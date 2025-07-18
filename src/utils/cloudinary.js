@@ -1,35 +1,45 @@
-import { v2 as cloudinary } from 'cloudinary'; 
+import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs";
+import path from "path";
 import dotenv from 'dotenv';
+
 dotenv.config();
- cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-        api_key:process.env.CLOUDINARY_API , 
-        api_secret:process.env.CLOUDINARY_API_SECRET
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const uploadOncloudinary = async (localfilepath) => {
+  // ✅ define fullPath before try so it's accessible in both try and catch
+  const fullPath = path.resolve(localfilepath);
+
+  try {
+    if (!localfilepath) return null;
+
+    const response = await cloudinary.uploader.upload(fullPath, {
+      resource_type: "auto",
     });
 
-   const uploadOncloudinary = async (localfilepath)=>{
-    try {
-        if(!localfilepath) return null;
-      const response= await cloudinary.uploader.upload(localfilepath,{
-            resource_type:"auto"
-        })
-        // upload on cloudinary
-        console.log("file is upload",response.url);
-     if (fs.existsSync(fullPath)) {
-      fs.unlinkSync(fullPath);
-      console.log("File deleted:", fullPath);
-      }
-      return response;
-       } catch (error) {
-        // remove the locallay saved file if the upload is fail
-        fs.unlinkSync(localfilepath);
-        console.log(error.message);
-        return null;
-        
-    }
-    
-   }
+    console.log("file is upload", response.url);
 
-   export {uploadOncloudinary}
-      
+    // ✅ delete only if file exists
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+      console.log("Local file deleted:", fullPath);
+    }
+
+    return response;
+  } catch (error) {
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+      console.log("Local file deleted after failure:", fullPath);
+    }
+
+    console.error("Cloudinary upload error:", error);
+    return null;
+  }
+};
+
+export { uploadOncloudinary };
