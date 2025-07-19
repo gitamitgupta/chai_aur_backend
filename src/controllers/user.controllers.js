@@ -6,7 +6,7 @@ import {Apiresponce}  from "../utils/apiresponce.js"
 const generateAccessAndRefereshToken=async(userId)=>{
  try {
     const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
+    const accessToken =  user.generateAccessToken();
     const refereshToken = user.generateRefreshToken();
     // puting the refersehtoken in mongoose data base 
     user.refreshToken= refereshToken
@@ -71,7 +71,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!createuser) {
         throw new ApiError(500," something went wrong user is not created")
     }
-   b // return response 
+   // return response 
    return res.status(201).json(
     new Apiresponce(200,createuser,"user is successfully create ")
  )
@@ -83,7 +83,7 @@ const loginUser = asyncHandler( async(req,res)=>{
     // send cookis 
      //req body se data
     const {email,username,password}=req.body
-    if(!email || !username){
+    if(!email && !username){
         throw new ApiError(400,"username or email is required");
     }
       // user or email
@@ -106,17 +106,16 @@ const loginUser = asyncHandler( async(req,res)=>{
     // access and referesh token 
     // create the function that generate token
    const userId= user._id
-   const {accessToken,refereshToken}=  generateAccessAndRefereshToken(userId)
+   const {accessToken,refereshToken}= await generateAccessAndRefereshToken(userId)
  const loginUser= await User.findById(userId).select(
-    "-password -refereshToken")
+    "-password -refreshToken")
 // option for secure cookices
     const option={
         httpOnly:true,
         secure:true
     }
 // send cookis
-    return
-    res.status(200)
+    return res.status(200)
     .cookie("accessToken",accessToken,option)
     .cookie("refereshToken",refereshToken,option)
     .json(
@@ -150,8 +149,8 @@ const loginUser = asyncHandler( async(req,res)=>{
     }
 
     res.status(200)
-    .clearcookie("accessToken",option)
-    .clearcookie("refereshToken",option)
+    .clearCookie("accessToken",option)
+    .clearCookie("refereshToken",option)
     .json(new Apiresponce(200,{},"user logged out"))
  })
 export { registerUser,

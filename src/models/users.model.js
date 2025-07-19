@@ -58,7 +58,7 @@ if(!this.isModified("password")) next();
    })
 
 userSchema.methods.isPasswordCorrect= async function (password) {
-  await bcrypt.compare(password,this.password)
+ return await bcrypt.compare(password,this.password)
    
 }
 // this part is good you have think about this 
