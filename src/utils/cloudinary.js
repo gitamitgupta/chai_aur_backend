@@ -12,7 +12,7 @@ cloudinary.config({
 });
 
 const uploadOncloudinary = async (localfilepath) => {
-  // ✅ define fullPath before try so it's accessible in both try and catch
+  // define fullPath before try so it's accessible in both try and catch
   const fullPath = path.resolve(localfilepath);
 
   try {
@@ -24,12 +24,12 @@ const uploadOncloudinary = async (localfilepath) => {
 
     console.log("file is upload", response.url);
 
-    // ✅ delete only if file exists
+    //  delete only if file exists
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
       console.log("Local file deleted:", fullPath);
     }
-
+ // returing the response which contain the url with many data object
     return response;
   } catch (error) {
     if (fs.existsSync(fullPath)) {
