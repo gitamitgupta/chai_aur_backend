@@ -152,7 +152,7 @@ const loginUser = asyncHandler( async(req,res)=>{
     res.status(200)
     .clearcookie("accessToken",option)
     .clearcookie("refereshToken",option)
-    .json(new Apiresponce(200,{},"user logged out")
+    .json(new Apiresponce(200,{},"user logged out"))
  })
 export { registerUser,
     loginUser,
